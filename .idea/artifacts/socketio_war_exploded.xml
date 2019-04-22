@@ -1,0 +1,40 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="socketio:war exploded">
+    <output-path>$PROJECT_DIR$/target/socketio</output-path>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="socketio" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.corundumstudio.socketio:netty-socketio:1.7.16" />
+          <element id="library" level="project" name="Maven: io.netty:netty-buffer:4.1.25.Final" />
+          <element id="library" level="project" name="Maven: io.netty:netty-common:4.1.25.Final" />
+          <element id="library" level="project" name="Maven: io.netty:netty-transport:4.1.25.Final" />
+          <element id="library" level="project" name="Maven: io.netty:netty-resolver:4.1.25.Final" />
+          <element id="library" level="project" name="Maven: io.netty:netty-handler:4.1.25.Final" />
+          <element id="library" level="project" name="Maven: io.netty:netty-codec-http:4.1.25.Final" />
+          <element id="library" level="project" name="Maven: io.netty:netty-codec:4.1.25.Final" />
+          <element id="library" level="project" name="Maven: io.netty:netty-transport-native-epoll:4.1.25.Final" />
+          <element id="library" level="project" name="Maven: io.netty:netty-transport-native-unix-common:4.1.25.Final" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.7.9" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.7.9.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.7.0" />
+          <element id="library" level="project" name="Maven: com.squareup.retrofit2:retrofit:2.5.0" />
+          <element id="library" level="project" name="Maven: com.squareup.okhttp3:okhttp:3.12.0" />
+          <element id="library" level="project" name="Maven: com.squareup.okio:okio:1.15.0" />
+          <element id="library" level="project" name="Maven: com.squareup.retrofit2:converter-gson:2.5.0" />
+          <element id="library" level="project" name="Maven: javax:javaee-web-api:6.0" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.5" />
+          <element id="library" level="project" name="Maven: org.slf4j:slf4j-simple:1.6.4" />
+          <element id="library" level="project" name="Maven: com.google.code.gson:gson:2.8.5" />
+          <element id="library" level="project" name="Maven: org.json:json:20180813" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/socketio/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="socketio/web/Web" />
+    </root>
+  </artifact>
+</component>

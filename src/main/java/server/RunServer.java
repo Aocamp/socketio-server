@@ -1,0 +1,8 @@
+package server;
+
+public class RunServer {
+    public static void main(String[] args) {
+        Server server = new Server();
+        new Thread(server).start();
+    }
+}
