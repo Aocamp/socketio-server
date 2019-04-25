@@ -85,9 +85,7 @@ public class Server implements Runnable{
             room.setId(roomId);
             System.out.println("user connect to room: " + roomName);
 
-            User user = new User();
-            user.setId(userId);
-            roomClient.sendEvent("roomId", room, user);
+            roomClient.sendEvent("roomId", room);
 
             userMap.put(userId, roomName);
         });
