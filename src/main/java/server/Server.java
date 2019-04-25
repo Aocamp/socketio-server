@@ -15,11 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Server implements Runnable{
-    private String roomName;
-
-    private Long userId;
-    private Long roomId;
-
     private Map<Long, String> userMap = new HashMap<>();
 
     private MessageService messageService = new MessageService();
@@ -42,6 +37,8 @@ public class Server implements Runnable{
             onConnection(server);
         });
 
+        connectToRoom(server);
+
         sendMessage(server);
 
         server.start();
@@ -52,19 +49,29 @@ public class Server implements Runnable{
         server.addEventListener("connection", User.class, (userClient, user, ackRequest) -> {
             System.out.println("username: " + user.getUserLogin());
 
-            userId = userService.getUserIdByLogin(user.getUserLogin());
+            Long userId = userService.getUserIdByLogin(user.getUserLogin());
+
+            User user1 = new User();
+            user1.setId(userId);
+
             System.out.println("id " + userId);
             if (userId.equals(0L)){
                 User newUser = userService.addUser(user);
-                userId = newUser.getId();
+                user1.setId(newUser.getId());
             }
+            userClient.sendEvent("userConnected", user1);
         });
+    }
 
+    private void connectToRoom(SocketIOServer server){
         server.addEventListener("room", Room.class, (roomClient, room, ackRequest2) -> {
-            System.out.println(userId);
-            Room roomInfo = roomService.getRoomByUserId(userId);
-            roomId = roomInfo.getId();
+            System.out.println(room.getUserId());
+            Long userId = room.getUserId();
 
+            Room roomInfo = roomService.getRoomByUserId(userId);
+            Long roomId = roomInfo.getId();
+
+            String roomName;
             if (roomId.equals(0L)){
                 room.setUserId(userId);
                 Room newRoom = roomService.addRoom(room);
@@ -80,7 +87,7 @@ public class Server implements Runnable{
 
             User user = new User();
             user.setId(userId);
-            server.getRoomOperations(roomName).sendEvent("roomAndUserId", room, user);
+            roomClient.sendEvent("roomId", room, user);
 
             userMap.put(userId, roomName);
         });
