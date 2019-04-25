@@ -8,11 +8,11 @@ import retrofit2.Response;
 import java.io.IOException;
 
 public class UserService {
-    public Long getUserIdByLogin(User user){
+    public Long getUserIdByLogin(String login){
         Call<User> userInfo = RetrofitClient
                 .getInstance()
                 .getUserApi()
-                .getByLogin(user.getUserLogin());
+                .getByLogin(login);
 
         Long id = null;
 
@@ -26,7 +26,7 @@ public class UserService {
        return id;
     }
 
-    public void addUser(User user){
+    public User addUser(User user){
         Call<User> add = RetrofitClient
                 .getInstance()
                 .getUserApi()
@@ -36,9 +36,11 @@ public class UserService {
             Response<User> userResponse = add.execute();
             if (userResponse.isSuccessful()){
                 System.out.println("new user " + user.getUserLogin() + "add");
+                return userResponse.body();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }

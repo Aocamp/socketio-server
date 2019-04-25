@@ -8,13 +8,13 @@ import org.json.JSONObject;
 public class User {
     @SerializedName("id")
     @Expose
-    protected Long id;
+    private Long id;
     @SerializedName("userLogin")
     @Expose
-    protected String userLogin;
+    private String userLogin;
     @SerializedName("support")
     @Expose
-    protected int support;
+    private int support;
 
     public User(){
 

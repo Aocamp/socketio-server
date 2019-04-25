@@ -5,15 +5,16 @@ import model.Room;
 import model.User;
 import retrofit2.Call;
 import retrofit2.Response;
+import sun.rmi.runtime.Log;
 
 import java.io.IOException;
 
 public class RoomService {
-    public String getRoomNameById(Room room){
+    public String getRoomNameById(Long roomId){
         Call<Room> get = RetrofitClient
                 .getInstance()
                 .getRoomApi()
-                .getRoomById(room.getId());
+                .getRoomById(roomId);
 
         String name = null;
 
@@ -28,11 +29,11 @@ public class RoomService {
         return name;
     }
 
-    public Room getRoomByUserId(User user){
+    public Room getRoomByUserId(Long userId){
         Call<Room> roomInfo = RetrofitClient
                 .getInstance()
                 .getRoomApi()
-                .getRoomByUserId(user.getId());
+                .getRoomByUserId(userId);
 
         Room room = null;
 
@@ -46,7 +47,7 @@ public class RoomService {
         return room;
     }
 
-    public void addRoom(Room room){
+    public Room addRoom(Room room){
         Call<Room> add = RetrofitClient
                 .getInstance()
                 .getRoomApi()
@@ -56,9 +57,11 @@ public class RoomService {
             Response<Room> roomResponse = add.execute();
             if (roomResponse.isSuccessful()){
                 System.out.println("new room " + room.getRoomName() + "add");
+                return roomResponse.body();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 }

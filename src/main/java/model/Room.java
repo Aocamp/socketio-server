@@ -1,12 +1,14 @@
 package model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import org.json.JSONObject;
 
 public class Room {
-    protected Long id;
-    protected Long userId;
+    private Long id;
+    private Long userId;
 
-    protected String roomName;
+    private String roomName;
 
     public Room(){
 

@@ -11,11 +11,20 @@ import service.MessageService;
 import service.RoomService;
 import service.UserService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Server implements Runnable{
     private String roomName;
 
     private Long userId;
     private Long roomId;
+
+    private Map<Long, String> userMap = new HashMap<>();
+
+    private MessageService messageService = new MessageService();
+    private UserService userService = new UserService();
+    private RoomService roomService = new RoomService();
 
     @Override
     public void run() {
@@ -28,70 +37,60 @@ public class Server implements Runnable{
         config.setPort(8888);
 
         final SocketIOServer server = new SocketIOServer(config);
-
         server.addConnectListener((client)->{
             System.out.println("client connected");
             onConnection(server);
         });
 
-        onNewMessage(server);
+        sendMessage(server);
 
         server.start();
     }
 
     private void onConnection(SocketIOServer server){
+
         server.addEventListener("connection", User.class, (userClient, user, ackRequest) -> {
-            server.addEventListener("room", Room.class, (roomClient, room, ackRequest2) -> {
-                System.out.println("username: " + user.getUserLogin());
+            System.out.println("username: " + user.getUserLogin());
 
-                UserService userService = new UserService();
-                userId = userService.getUserIdByLogin(user);
+            userId = userService.getUserIdByLogin(user.getUserLogin());
+            System.out.println("id " + userId);
+            if (userId.equals(0L)){
+                User newUser = userService.addUser(user);
+                userId = newUser.getId();
+            }
+        });
 
-                if (userId == null ){
-                    userService.addUser(user);
-                    userId = userService.getUserIdByLogin(user);
-                }
+        server.addEventListener("room", Room.class, (roomClient, room, ackRequest2) -> {
+            System.out.println(userId);
+            Room roomInfo = roomService.getRoomByUserId(userId);
+            roomId = roomInfo.getId();
 
-                user.setId(userId);
+            if (roomId.equals(0L)){
+                room.setUserId(userId);
+                Room newRoom = roomService.addRoom(room);
+                roomName = newRoom.getRoomName();
+                roomId = newRoom.getId();
+            }else {
+                roomName = roomService.getRoomNameById(roomId);
+            }
 
-                RoomService roomService = new RoomService();
-                Room roomInfo = roomService.getRoomByUserId(user);
-                roomId = roomInfo.getId();
+            roomClient.joinRoom(roomName);
+            room.setId(roomId);
+            System.out.println("user connect to room: " + roomName);
 
-                if (roomId == null){
-                    room.setUserId(userId);
-                    roomService.addRoom(room);
-                    Room getRoom = roomService.getRoomByUserId(user);
+            User user = new User();
+            user.setId(userId);
+            server.getRoomOperations(roomName).sendEvent("roomAndUserId", room, user);
 
-                    roomName = getRoom.getRoomName();
-                    roomId = getRoom.getId();
-
-                    roomClient.joinRoom(roomName);
-                    room.setId(roomId);
-
-                    server.getRoomOperations(roomName).sendEvent("roomId",room);
-                    System.out.println("user connect to room: " + roomName);
-                }else {
-                    room.setId(roomId);
-                    roomName = roomService.getRoomNameById(room);
-                    roomClient.joinRoom(roomName);
-
-                    server.getRoomOperations(roomName).sendEvent("roomId", room);
-                    System.out.println("user connect to room: " + roomName);
-                }
-            });
+            userMap.put(userId, roomName);
         });
     }
 
-    private void onNewMessage(SocketIOServer server){
+    private void sendMessage(SocketIOServer server){
         server.addEventListener("new message", Message.class,
                 (client, message, ackRequest) -> {
-                    message.setRoomId(roomId);
-                    message.setUserId(userId);
-
-                    MessageService service = new MessageService();
-                    service.addMessage(message);
-                    server.getRoomOperations(roomName).sendEvent("message", message);
-                });
+            messageService.addMessage(message);
+            server.getRoomOperations(userMap.get(message.getUserId())).sendEvent("message", message);
+        });
     }
 }
